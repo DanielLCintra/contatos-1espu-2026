@@ -6,7 +6,6 @@ import ContactList from "./components/ContactList";
 const HomePage = () => {
   const [contacts, setContacts] = useState([]);
 
-
   return (
     <div className="min-h-screen bg-gray-200 p-6">
       <div className="max-w-3xl mx-auto space-y-6">
