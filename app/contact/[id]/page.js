@@ -1,19 +1,46 @@
 // app/contact/[id]/page.js
 "use client";
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const ContactDetailPage = () => {
-  const params = useParams();           // { id: "1234567890" }
-  const router = useRouter();           // para navegar programaticamente
-  const searchParams = useSearchParams(); // ?nome=João&email=...
+  const params = useParams();          
+  const router = useRouter();    
+  const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Reconstrói o objeto contato a partir dos query parameters
-  const contact = {
-    id: parseInt(params.id),
-    nome: searchParams.get('nome'),
-    email: searchParams.get('email'),
-    telefone: searchParams.get('telefone'),
-  };
+  useEffect(() => {
+    // Buscar contatos do localStorage
+    const savedContacts = localStorage.getItem('contatos');
+    if (savedContacts) {
+      const contacts = JSON.parse(savedContacts);
+      const foundContact = contacts.find(c =>  c.id === parseInt(params.id));
+      
+      if (foundContact) {
+        setContact(foundContact);
+      } else {
+        // Contato não encontrado
+        router.push('/');
+      }
+    } else {
+      // Não há contatos salvos
+      router.push('/');
+    }
+    setLoading(false);
+  }, [params.id, router]);
+
+   if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white shadow rounded-lg p-6">
+            <p className="text-gray-600">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
