@@ -1,10 +1,16 @@
 import { useCallback } from "react";
 import ContactItem from "./ContactItem";
+import contactsApi from "../services/contactsApi";
 
 const ContactList = ({ contacts,setContacts }) => {
 
-    const handleRemove = useCallback((id) => {
-        setContacts((prev) => prev.filter((c) => c.id !== id));
+    const handleRemove = useCallback(async (id) => {
+        try {
+            await contactsApi.delete(`/contatos/${id}`)
+            setContacts((prev) => prev.filter((c) => c.id !== id));
+        } catch (error) {
+            console.log(error)
+        }
     }, []);
 
     return (<section className="bg-white shadow rounded">

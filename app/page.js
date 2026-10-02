@@ -4,6 +4,7 @@ import ContactForm from "./components/ContactForm";
 import ContactList from "./components/ContactList";
 import FilterInput from "./components/FilterInput";
 import Statistics from "./components/Statistics";
+import contactsApi from "./services/contactsApi";
 
 
 const HomePage = () => {
@@ -25,13 +26,26 @@ const HomePage = () => {
     );
   }, [contacts, filter]);
 
+  // useEffect(() => {
+  //   const savedContacts = localStorage.getItem('contatos');
+  //   if (savedContacts) {
+  //     setContacts(JSON.parse(savedContacts));
+  //   }
+  //   setIsLoaded(true);
+  // }, []);
+
   useEffect(() => {
-    const savedContacts = localStorage.getItem('contatos');
-    if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
+    const loadContacts = async () => {
+      try {
+        const response = await contactsApi.get('/contatos')
+        setContacts(response.data)
+      } catch (error) {
+        console.log(erro)
+      }
     }
-    setIsLoaded(true);
-  }, []);
+
+    loadContacts()
+  }, [])
 
   useEffect(() => {
     if (isLoaded) {
