@@ -1,35 +1,37 @@
+// app/page.js (MODIFICAR ARQUIVO EXISTENTE)
 "use client";
-import ContactForm from "./components/ContactForm";
-import ContactList from "./components/ContactList";
-import FilterInput from "./components/FilterInput";
-import Statistics from "./components/Statistics";
-import PageHeader from "./components/ui/PageHeader";
-import { useContactsContext } from "./contexts/ContactsContext";
-import useFilter from "./hooks/useFilter";
-import useStatistics from "./hooks/useStatistics";
+
+import { useEffect } from 'react';
+import { useAuth } from './hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const HomePage = () => {
-  const { contacts } = useContactsContext()
-  const filterData = useFilter(contacts)
-  const stats = useStatistics(contacts)
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
 
-  return (
-    <div className="min-h-screen bg-gray-200 p-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <PageHeader title="Cadastro de Contatos">
-          <FilterInput value={filterData.filter} onChange={filterData.handleFilterChange} />
-        </PageHeader>
+  useEffect(() => {
+    if (!loading) {
+      if (isAuthenticated) {
+        router.push('/dashboard');
+      } else {
+        router.push('/login');
+      }
+    }
+  }, [isAuthenticated, loading, router]);
 
-        {/* ===== FORMULÁRIO ===== */}
-        <ContactForm />
-
-        <Statistics stats={stats} />
-
-        {/* ===== LISTA DE CONTATOS ===== */}
-        <ContactList contacts={filterData.filteredContacts} />
+  // Mostrar loading enquanto verifica autenticação
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <i className="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
+          <p className="text-gray-600">Carregando aplicação...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 };
 
 export default HomePage;
